@@ -1,0 +1,60 @@
+
+<html>
+<head>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>
+    $(function() {
+      $.get('yunbot.dat.txt', function(data) {
+   
+        var html_data = '<h3>Data Log</h3><p style="font-size:12px">';
+        var dataset = data.split("\n");
+        
+        var totalSamples = 800;
+        var mAvgLong = 0;
+        var mAvgShort = 0;
+        
+        for (var i = 1; i < totalSamples; i++) {
+        
+        data = dataset[(dataset.length-1)-i];
+        
+        var parsed_data = data.split(",");
+        var ts = parsed_data[0];
+        	    
+        var s = 'Status: ' + parsed_data[1];
+        var h = 'Humidity: ' + parsed_data[2];	  
+        var t = 'Temperature: ' + parsed_data[3];	  
+        var m = 'Moisture Level: ' + parsed_data[4];
+        
+        mAvgLong += parseInt(parsed_data[4]);
+        
+        if (i < totalSamples / 8) {
+          mAvgShort = mAvgLong;
+        }
+        
+        if (i == 1) {
+          html_data += "<b>";
+          html_data += "[" + ts + "] " + s + ", " + h + ", " + t + ", " + m;
+          html_data += "</b>";
+          html_data += "<br/>";
+        }
+        }
+        
+        html_data += "Average Moisture (Long Term): " + mAvgLong / totalSamples;
+        html_data += "<br/>";
+        html_data += "Average Moisture (Short Term): " + mAvgShort / (totalSamples / 8);
+        html_data += "<br/>";
+        html_data += "</p>";
+        $('#text-file-container').html(html_data);
+      });
+    });
+  </script>
+  
+  
+  <!-- refresh page after a few seconds, this works nearly in every browser -->
+ <!-- <meta http-equiv="refresh" content="10" />-->
+</head>
+<body>
+      <img src="/?action=snapshot" alt="This is a static snapshot" />
+  <div id="text-file-container"></div>
+</body>
+</html>
